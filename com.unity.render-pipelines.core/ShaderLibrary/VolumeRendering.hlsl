@@ -267,6 +267,19 @@ void ImportanceSampleHomogeneousMedium(real rndVal, real extinction, real interv
     offset = -log(1 - rndVal * x) * c;
 }
 
+void ImportanceSampleExponentialMedium(real rndVal, real extinction, real falloff,
+                                       out real offset, out real rcpPdf)
+{
+
+    // Extinction[t] = Extinction[0] * exp(-falloff * t).
+    real c = extinction;
+    real a = falloff;
+
+    // TODO: optimize...
+    offset = -log(1 - a / c * log(rndVal)) / a;
+    rcpPdf = rcp(c * exp(-a * offset) * exp(-c / a * (1 - exp(-a * offset))));
+}
+
 // Implements equiangular light sampling.
 // Returns the distance from the origin of the ray, the squared distance from the light,
 // and the reciprocal of the PDF.
